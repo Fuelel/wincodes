@@ -1,0 +1,85 @@
+//YWROBOT
+//Compatible with the Arduino IDE 1.0
+//Library version:1.1
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
+
+unsigned long premilis = 0;
+int seconds = 0;
+int sec = 0;
+int minuty = 0;
+bool run = false;
+
+void setup()
+{
+  pinMode(3, INPUT_PULLUP);
+  pinMode(4, INPUT_PULLUP);
+
+  lcd.init();                      // initialize the lcd 
+  lcd.init();
+  // Print a message to the LCD.
+  lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print("Mikrovlnka");
+  lcd.setCursor(0,1);
+  lcd.print("00:00");
+ 
+  
+}
+void loop()
+{
+if(digitalRead(3) == LOW){
+  seconds = seconds + 15;
+  sec = sec + 15;
+  
+  delay(200);
+  lcd.setCursor(0,1);
+  run = true;
+}
+if(digitalRead(4) == LOW){ 
+  delay(200);
+  run = !run;
+}
+if(run == true){
+
+  long curentmilis = millis();
+    if(curentmilis - premilis >= 1000){
+      premilis = curentmilis;
+      seconds--;
+      sec--;
+
+      lcd.setCursor(0,1);  
+      if(sec >= 10){
+        lcd.print("0");
+        minuty = seconds / 60;
+        sec = seconds % 60;
+        lcd.print(minuty);
+        lcd.print(":");
+        lcd.print(sec);
+        lcd.print("                        ");
+      }
+      else {
+        lcd.print("0");
+        minuty = seconds / 60;
+        sec = seconds % 60;
+        lcd.print(minuty);
+        lcd.print(":");
+        lcd.print("0");
+        lcd.print(sec);
+        lcd.print("                             ");
+ 
+      }
+      if(seconds == 0){
+        lcd.setCursor(5,1);
+        lcd.print("                        ");
+        lcd.print(seconds);
+        run = false;
+      }
+  }
+  
+  
+
+}
+}
